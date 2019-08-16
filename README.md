@@ -25,7 +25,12 @@ $ git clone https://github.com/lewis-weinberger/slap
 
 ## Usage
 
-**slap** provides two classes: `LAEModel` (defined in [slap.py](./slap.py)) and `Catalogue` (defined in [catalogue.py](./catalogue.py)). The `LAEModel` class can be used to generate an LAE population from a dark matter halo population. The `Catalogue` class is a useful data-structure for storing the generated LAE population in a catalogue.
+**slap** provides two classes: `LAEModel` (defined in [model.py](slap/model.py)) and `Catalogue` (defined in [catalogue.py](slap/catalogue.py)).
+```
+from slap import LAEModel, Catalogue
+```
+
+The `LAEModel` class can be used to generate an LAE population from a dark matter halo population. The `Catalogue` class is a useful data-structure for storing the generated LAE population in a catalogue.
 
 A full example detailing the use of **slap** can be found at [EXAMPLE](./EXAMPLE.md).
 

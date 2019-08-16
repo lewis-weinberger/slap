@@ -6,7 +6,7 @@ the methods outlined in Weinberger et al. (2019).
 Examples:
 --------
     Import the module:
-        >>> import slap
+        >>> import model
 
     Generate LAE population:
         >>> lae_pop = slap.LAEModel(z, delta_t, halo_mass, rew_min, lya_min)
