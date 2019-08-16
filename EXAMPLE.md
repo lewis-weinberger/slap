@@ -1,6 +1,6 @@
 # Example
 
-An example script, [example.py](./example.py), is provided that uses **slap** to generate an LAE population at z=7.3, to compare with the observational data from [Konno et al. (2014)](). Having installed the dependencies (e.g. by following the instructions in [SETUP](SETUP.md)) you can run this example to generate a plot of the luminosity function:
+An example script, [example.py](./example.py), is provided that uses **slap** to generate an LAE population at z=7.3, to compare with the observational data from [Konno et al. (2014)](https://doi.org/10.1088/0004-637X/797/1/16). Having installed the dependencies (e.g. by following the instructions in [SETUP](SETUP.md)) you can run this example to generate a plot of the luminosity function:
 
 ```
 $ python example.py
@@ -43,7 +43,7 @@ Recent versions of `hmf` raise the following warning:
 ```
  warnings.warn("hmf is un-tested for redshifts greater than 2 and extreme masses. See https://github.com/steven-murray/HMFcalc/issues/6 for details.")
 ```
-The warning suggests that the default choice of CAMB parameters used in `MassFunction` may not be applicable to higher redshifts or lower halo masses, first raised as issue [hmf:#6](https://github.com/steven-murray/HMFcalc/issues/6). See issue [slap:#1]() for further details.
+The warning suggests that the default choice of CAMB parameters used in `MassFunction` may not be applicable to higher redshifts or lower halo masses, first raised as issue [hmf:#6](https://github.com/steven-murray/HMFcalc/issues/6). See issue [slap:#1](https://github.com/lewis-weinberger/slap/issues/1) for further details.
 
 Note these warnings can be suppressed by running with the `-W ignore` flag:
 ```
