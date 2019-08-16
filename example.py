@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 # Parameters
 z = 7.3           # redshift
-t_igm = 0.20      # toy IGM transmission fraction
+t_igm = 0.15      # toy IGM transmission fraction
 delta_t = 50      # duty cycle parameter
 rew_min = 0       # observational minimum Lya REW
 lya_min = 2.4e42  # observational minimum Lya luminosity
@@ -31,6 +31,7 @@ print("\nGenerating", n_halo, "halos in parent population")
 halo_mass, _ = sample_mf(n_halo, 10, z=z, hmf_model="SMT")
 print("Halo mass: min = {:.1e}, max = {:.1e} Msun/h".format(
     halo_mass.min(), halo_mass.max()))
+halo_mass /= smallh # Msun
 
 # Generate LAE population from halo population
 lae_pop = LAEModel(z, delta_t, halo_mass, rew_min, lya_min)

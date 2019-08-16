@@ -69,12 +69,12 @@ def vectorize_if_needed(func, x):
     
     Args:
     -----
-        func (function): input function
-        x (scalar or array_like): function argument(s)
+        func (function): input function.
+        x (scalar or array_like): function argument(s).
 
     Returns:
     --------
-        out (scalar or array_like): function applied to argument(s)
+        out (scalar or array_like): function applied to argument(s).
 
     """
 
@@ -90,11 +90,11 @@ def Hub(z):
 
     Args:
     -----
-        z (float or array_like): redshift
+        z (float or array_like): redshift.
 
     Returns:
     --------
-        Hub (float or array_like): Hubble parameter in km/s/Mpc
+        Hub (float or array_like): Hubble parameter in km/s/Mpc.
 
     """
 
@@ -110,11 +110,11 @@ def tHub(z):
 
     Args:
     -----
-        z (float or array_like): redshift
+        z (float or array_like): redshift.
 
     Returns:
     --------
-        tHub (float or array_like): age in Myr
+        tHub (float or array_like): age in Myr.
     
     """
     
@@ -130,8 +130,8 @@ def dtHub(z_end, z_start):
 
     Args:
     -----
-        z_end (float or array_like): end redshift
-        z_start (float or array_like): start redshift
+        z_end (float or array_like): end redshift.
+        z_start (float or array_like): start redshift.
 
     Returns:
     --------
@@ -151,13 +151,13 @@ def smt_hmf(znew, log=False):
 
     Args:
     -----
-        znew (float): redshift for halo mass function
-        log (bool): if True use logarithmic mass bins
+        znew (float): redshift for halo mass function.
+        log (bool): if True use logarithmic mass bins.
 
     Returns:
     --------
-        mass (array_like): mass bins
-        hmf (array_like): halo mass function for mass bins
+        mass (array_like): mass bins.
+        hmf (array_like): halo mass function for mass bins.
 
     """
     
@@ -177,14 +177,14 @@ def schecter_M(mag, phi0, mag0, alpha):
     
     Args:
     -----
-        mag (float or array_like): magnitude bin(s)
-        phi0 (float): magnitude reference value
-        mag0 (float): luminosity function reference value
-        alpha (float): slope
+        mag (float or array_like): magnitude bin(s).
+        phi0 (float): magnitude reference value.
+        mag0 (float): luminosity function reference value.
+        alpha (float): slope.
 
     Returns:
     --------
-        n_M (float or array_like): number density in Mpc^-3
+        n_M (float or array_like): number density in Mpc^-3.
 
     """
     magpow = 10**(0.4*(mag0 - mag))
@@ -198,13 +198,13 @@ def edc(Mh, z, delta_t=50):
     
     Args:
     -----
-        Mh (float or array_like): halo mass(es) in Msun/h
-        z (float): redshift
-        delta_t (float): duty cycle parameter
+        Mh (float or array_like): halo mass(es) in Msun/h.
+        z (float): redshift.
+        delta_t (float): duty cycle parameter.
 
     Returns:
     --------
-        eps (float or array_like): duty cycle fraction
+        eps (float or array_like): duty cycle fraction.
 
     """
     
@@ -395,12 +395,12 @@ def sample_dist(Muv, z):
 
     Args:
     -----
-        Muv (float or array_like): UV magnitude(s)
+        Muv (float or array_like): UV magnitude(s).
         z (float): redshift
 
     Returns:
     --------
-        REW sample (float or array_like): sample of REW(s)
+        REW sample (float or array_like): sample of REW(s).
     
     """
     
@@ -415,15 +415,15 @@ def sample_dist(Muv, z):
 
 
 def abundance_match(delta_t):
-    """Abundance match halo mass function to UV luminosity function at z=6
+    """Abundance match halo mass function to UV luminosity function at z=6.
 
     Args:
     -----
-        delta_t (float): duty cycle parameter
+        delta_t (float): duty cycle parameter in Myr.
 
     Returns:
     --------
-        lum_func (func): mapping from halo mass to LBG UV luminosity
+        lum_func (func): mapping from halo mass to LBG UV luminosity.
 
     """
 
@@ -449,6 +449,7 @@ def abundance_match(delta_t):
 
     mass /= smallh # units of Msun
     lum_func = interp1d(mass, lum, fill_value='extrapolate')
+    # maps from [Msun] to [AB magnitude]
 
     return lum_func
 
@@ -458,16 +459,16 @@ def generate_LBGs(lum_func, halo_mass, redshift, delta_t):
 
     Args:
     -----
-        lum_func (func): UV luminosity mapping
-        halo_mass (array_like): halo masses
-        redshift (float)
-        delta_t (float): duty cycle parameter
+        lum_func (func): UV luminosity mapping.
+        halo_mass (array_like): halo masses in Msun.
+        redshift (float): redshift.
+        delta_t (float): duty cycle parameter.
 
     Returns:
     --------
-        UV_lum (array_like): UV luminosities of LBG sample
-        halo_mass (array_like): halo masses of LBG sample
-        halo_ids (array_like): halo ids of LBG sample
+        UV_lum (array_like): UV luminosities of LBG sample.
+        halo_mass (array_like): halo masses of LBG sample.
+        halo_ids (array_like): halo ids of LBG sample.
 
     """
 
@@ -493,16 +494,16 @@ def generate_LAEs(UV_lum, halo_mass, halo_ids, redshift, rew_min, lya_min):
 
     Args:
     -----
-        lum_func (func): UV luminosity mapping
-        halo_mass (array_like): halo masses
-        redshift (float)
-        delta_t (float): duty cycle parameter
+        lum_func (func): UV luminosity mapping.
+        halo_mass (array_like): halo masses in Msun.
+        redshift (float): redshift.
+        delta_t (float): duty cycle parameter.
 
     Returns:
     --------
-        UV_lum (array_like): UV luminosities of LBG sample
-        halo_mass (array_like): halo masses of LBG sample
-        halo_ids (array_like): halo ids of LBG sample
+        UV_lum (array_like): UV luminosities of LBG sample.
+        halo_mass (array_like): halo masses of LBG sample.
+        halo_ids (array_like): halo ids of LBG sample.
 
     """
 
@@ -530,7 +531,7 @@ class LAEModel:
     Attributes:
     -----------
         halo_ids (array_like): halo IDs of the LAE population.
-        halo_mass (array_like): host halo masses in Msun/h.
+        halo_mass (array_like): host halo masses in Msun.
         uv_lum (array_like): UV luminosities in erg/s.
         lya_rew (array_like): Lya REWs in Angstroms.
         lya_lum (array_like): Lya luminosities in erg/s.
@@ -544,9 +545,11 @@ class LAEModel:
         -----
             redshift (float): mean redshift of the LAE population.
             delta_t (float): duty cycle parameter in Myr.
-            mass_h (array_like): array of halo masses.
-            rew_min (float): minimum observationally detectable REW.
-            lya_min (float): minimum observationally detectable luminosity.
+            mass_h (array_like): array of halo masses in Msun.
+            rew_min (float): minimum observationally detectable REW in 
+                Angstroms.
+            lya_min (float): minimum observationally detectable luminosity
+                in erg/s.
 
         """
         

@@ -31,7 +31,7 @@ From this object you can access the following attributes:
 - `lya_rew`: the intrinsic Lya REW of the LAEs
 
 Note: this generates the _intrinsic_ LAE population, it does not account for e.g. IGM attenuation of the Lya radiation.
-In [example.py](example.py), we try a toy model in which only 20% of the emission survives the IGM for **every** LAE (regardless of luminosity, mass etc.).
+In [example.py](example.py), we try a toy model in which only 15% of the emission survives the IGM for **every** LAE (regardless of luminosity, mass etc.).
 
 ```
 t_igm = 0.2
