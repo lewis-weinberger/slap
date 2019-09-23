@@ -20,6 +20,7 @@ Examples:
 
 """
 
+import warnings
 import numpy as np
 from numpy import trapz
 from scipy.integrate import quad
@@ -49,7 +50,6 @@ mag0_z6 = -20.94          # AB magnitude
 alpha_z6 = -1.87          # dimensionless
 
 # LAE EW DISTRIBUTION
-massmin = 1e9             # Minimum mass, Msun
 l_alpha = 1216            # Lya wavelength, Angstroms
 l_UV = 1600               # UV wavelength, Angstroms
 nu_alpha = 2.47e15        # Lya frequency, Hz
@@ -80,9 +80,9 @@ def vectorize_if_needed(func, x):
 
     if np.isscalar(x):
         return func(x)
-    else:
-        vfunc = np.vectorize(func)
-        return vfunc(x)
+
+    vfunc = np.vectorize(func)
+    return vfunc(x)
 
     
 def Hub(z):
@@ -552,6 +552,10 @@ class LAEModel:
                 in erg/s.
 
         """
+        if mass_h.min() < (10**Mmin)/smallh:
+            print("Note: UV abundance matching for haloes",
+                  "above M = {:.3e} Msun/h".format(10**Mmin))
+            warnings.warn("Input halo mass below abundance matching regime!")
         
         uv_func = abundance_match(delta_t)
         print("Abundance matching at z=6 completed!")
