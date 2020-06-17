@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Generate an LAE population from a dark matter halo population, based on 
+"""Generate an LAE population from a dark matter halo population, based on
 the methods outlined in Weinberger et al. (2019).
 
 Examples:
@@ -60,13 +60,14 @@ dijC = (nu_alpha/l_alpha)*(l_UV/l_alpha)**(-betaUV-2)
 Mmin = np.log10(5e8*smallh)
 Mmax = np.log10(1e15*smallh)
 SMT_HMF = MassFunction(Mmin=Mmin, Mmax=Mmax, z=6, hmf_model="SMT",
-    cosmo_model="Planck13")
+                       cosmo_model="Planck13")
 
 #------------------------------------------------------------------------------
 
+
 def vectorize_if_needed(func, x):
     """Helper function to vectorise functions on array arguments.
-    
+
     Args:
     -----
         func (function): input function.
@@ -84,7 +85,7 @@ def vectorize_if_needed(func, x):
     vfunc = np.vectorize(func)
     return vfunc(x)
 
-    
+
 def Hub(z):
     """Hubble parameter.
 
@@ -100,9 +101,9 @@ def Hub(z):
 
     omega_k = 1 - omega_m - omega_L
     H0 = 100*smallh
-    H_z = H0 * np.sqrt( (omega_m)*(1 + z)**3 + omega_L + omega_k*(1 + z)**2 )
+    H_z = H0 * np.sqrt((omega_m)*(1 + z)**3 + omega_L + omega_k*(1 + z)**2)
 
-    return H_z 
+    return H_z
 
 
 def tHub(z):
@@ -115,9 +116,9 @@ def tHub(z):
     Returns:
     --------
         tHub (float or array_like): age in Myr.
-    
+
     """
-    
+
     func = lambda x: 1/((1+x)*Hub(x))
     t_z_func = lambda zp: quad(func, zp, np.inf)[0]
     t_z = vectorize_if_needed(t_z_func, z)
@@ -136,13 +137,13 @@ def dtHub(z_end, z_start):
     Returns:
     --------
         dtHub (float): time interval in Myr
-    
+
     """
-    
+
     func = lambda x: 1/((1+x)*Hub(x))
     dt_func = lambda ze: quad(func, z_start, ze)[0]
     dt = vectorize_if_needed(dt_func, z_end)
-    
+
     return dt*tconv
 
 
@@ -160,7 +161,7 @@ def smt_hmf(znew, log=False):
         hmf (array_like): halo mass function for mass bins.
 
     """
-    
+
     SMT_HMF.update(z=znew)
     m = SMT_HMF.m                # Msun/h
     if log:
@@ -174,7 +175,7 @@ def smt_hmf(znew, log=False):
 def schecter_M(mag, phi0, mag0, alpha):
     """Schecter luminosity function.
     Note: function of magnitudes not luminosities.
-    
+
     Args:
     -----
         mag (float or array_like): magnitude bin(s).
@@ -195,7 +196,7 @@ def schecter_M(mag, phi0, mag0, alpha):
 
 def edc(Mh, z, delta_t=50):
     """Effective duty cycle, see Trenti et al. 2010.
-    
+
     Args:
     -----
         Mh (float or array_like): halo mass(es) in Msun/h.
@@ -207,16 +208,16 @@ def edc(Mh, z, delta_t=50):
         eps (float or array_like): duty cycle fraction.
 
     """
-    
-    guess = [z-1,z+5]
-    test = lambda zdt: dtHub(zdt,z) - delta_t
+
+    guess = [z-1, z+5]
+    test = lambda zdt: dtHub(zdt, z) - delta_t
     z_dt = bisect(test, guess[0], guess[1])
-   
-    m, hmf = smt_hmf(z) # Msun/h and  (Msun/h)^-1 (Mpc/h)^-3
+
+    m, hmf = smt_hmf(z)  # Msun/h and  (Msun/h)^-1 (Mpc/h)^-3
     m_dt, hmf_dt = smt_hmf(z_dt)
-    numer_func = lambda M: (trapz(y=hmf[m>=M],x=m[m>=M])
-                          - trapz(y=hmf_dt[m_dt>=M],x=m_dt[m_dt>=M]))
-    denom_func = lambda M: trapz(y=hmf[m>=M],x=m[m>=M])
+    numer_func = lambda M: (trapz(y=hmf[m >= M], x=m[m >= M])
+                            - trapz(y=hmf_dt[m_dt >= M], x=m_dt[m_dt >= M]))
+    denom_func = lambda M: trapz(y=hmf[m >= M], x=m[m >= M])
 
     numer = vectorize_if_needed(numer_func, Mh)
     denom = vectorize_if_needed(denom_func, Mh)
@@ -228,7 +229,7 @@ def edc(Mh, z, delta_t=50):
 
 def edc_quick(Mh, z, delta_t):
     """Interpolate effective duty cycle from sparser sampling.
-    
+
     Args:
     -----
         Mh (float or array_like): halo mass(es) in Msun/h
@@ -240,15 +241,15 @@ def edc_quick(Mh, z, delta_t):
         eps (float or array_like): duty cycle fraction
 
     """
-    
-    mass, _ = smt_hmf(z) # Msun/h and  (Msun/h)^-1 (Mpc/h)^-3
-    edc_func = interp1d(mass, edc(mass, z, delta_t), 
-        fill_value='extrapolate')
+
+    mass, _ = smt_hmf(z)  # Msun/h and  (Msun/h)^-1 (Mpc/h)^-3
+    edc_func = interp1d(mass, edc(mass, z, delta_t),
+                        fill_value='extrapolate')
 
     return edc_func(Mh)
 
 
-def REWc(Muv,z):
+def REWc(Muv, z):
     """Characteristic REW.
     See Dijkstra & Wyithe (2010).
 
@@ -262,7 +263,7 @@ def REWc(Muv,z):
         REWc (array_like): characteristic REW.
 
     """
-    
+
     REWc0 = 23
     deltaM = Muv + 21.9
     deltaz = z - 4
@@ -288,10 +289,10 @@ def a1(Muv):
         a1 (array_like): minimum REWs.
 
     """
-    
+
     a1 = 20*np.ones(shape=Muv.shape)
     a1 = np.where(Muv >= -21.5, 20 - 6*(Muv + 21.5)**2, a1)
-    a1 = np.where(Muv > -19, -17.5, a1) 
+    a1 = np.where(Muv > -19, -17.5, a1)
 
     return a1
 
@@ -311,11 +312,11 @@ def rewnorm(Muv, z, rewmax=400):
         N (array_like): normalisations.
 
     """
-    
+
     rewc = REWc(Muv, z)
     N = (np.exp(a1(Muv)/rewc) - np.exp(-rewmax/rewc))**(-1)
     N /= rewc
-    
+
     return N
 
 
@@ -334,7 +335,7 @@ def invCDF_ew(P, Muv, z):
         REW (array_like).
 
     """
-    
+
     rewc = REWc(Muv, z)
     N = rewnorm(Muv, z)
     C = N*rewc
@@ -358,11 +359,11 @@ def PDF_ew(W, Muv, z):
         P (array_like): PDF(W|Muv).
 
     """
-    
-    assert(W.shape==Muv.shape)
+
+    assert W.shape == Muv.shape
     rewc = REWc(Muv, z)
     N = rewnorm(Muv, z)
-    
+
     return N*np.exp(-W/rewc)
 
 
@@ -381,12 +382,12 @@ def CDF_ew(W, Muv, z):
         P (array_like): CDF(W|Muv).
 
     """
-    
-    assert(W.shape==Muv.shape)
+
+    assert W.shape == Muv.shape
     rewc = REWc(Muv, z)
     N = rewnorm(Muv, z)
     C = np.exp(a1(Muv)/rewc)
-    
+
     return rewc*N*(C-np.exp(-W/rewc))
 
 
@@ -401,9 +402,9 @@ def sample_dist(Muv, z):
     Returns:
     --------
         REW sample (float or array_like): sample of REW(s).
-    
+
     """
-    
+
     if np.isscalar(Muv):
         urand = np.random.uniform(low=0, high=1, size=1)
     else:
@@ -427,19 +428,20 @@ def abundance_match(delta_t):
 
     """
 
-    mass, hmf = smt_hmf(5.9) # Msun/h and (Msun/h)^-1 (Mpc/h)^-3
+    mass, hmf = smt_hmf(5.9)  # Msun/h and (Msun/h)^-1 (Mpc/h)^-3
     edc_mass = edc(mass, 5.9, delta_t)
     lum = np.zeros(shape=mass.shape)
     for m in range(mass.size):
         M = mass[m]
         edc_M = edc_mass[m]
-        mass_integral = edc_M*np.trapz(y=hmf[mass>=M]*smallh**3, x=mass[mass>=M]) 
+        mass_integral = edc_M*np.trapz(y=hmf[mass >= M]*smallh**3,
+                                       x=mass[mass >= M])
         # units = Mpc^-3
 
         def find_map(desired_mag):
             mag_space = np.linspace(-27, desired_mag, num=100)
             phi_space = schecter_M(mag_space, phi0_z6, mag0_z6, alpha_z6)
-            lum_integral = np.trapz(y=phi_space, x=mag_space) # units Mpc^-3
+            lum_integral = np.trapz(y=phi_space, x=mag_space)  # units Mpc^-3
 
             return lum_integral - mass_integral
 
@@ -447,7 +449,7 @@ def abundance_match(delta_t):
         lum_mass = bisect(find_map, guess[0], guess[1], disp=True)
         lum[m] = lum_mass
 
-    mass /= smallh # units of Msun
+    mass /= smallh  # units of Msun
     lum_func = interp1d(mass, lum, fill_value='extrapolate')
     # maps from [Msun] to [AB magnitude]
 
@@ -477,10 +479,10 @@ def generate_LBGs(lum_func, halo_mass, redshift, delta_t):
 
     edcs = edc_quick(halo_mass*smallh, redshift, delta_t)
 
-    duty = np.ones_like(halo_mass,dtype=np.int32)
+    duty = np.ones_like(halo_mass, dtype=np.int32)
     for n in range(duty.size):
-        duty[n] = np.random.choice(2, p=[1-edcs[n],edcs[n]])
-    duty_mask = np.where(duty==1, True, False)
+        duty[n] = np.random.choice(2, p=[1-edcs[n], edcs[n]])
+    duty_mask = np.where(duty == 1, True, False)
 
     halo_mass = halo_mass[duty_mask]
     UV_lum = UV_lum[duty_mask]
@@ -518,7 +520,7 @@ def generate_LAEs(UV_lum, halo_mass, halo_ids, redshift, rew_min, lya_min):
     mask = np.logical_and(ew_dist > rew_min, lya_lum > lya_min)
     lya_lum = lya_lum[mask]
     halo_mass = halo_mass[mask]
-    halo_ids = halo_ids[mask] 
+    halo_ids = halo_ids[mask]
     UV_lum = UV_lum[mask]
     ew_dist = ew_dist[mask]
 
@@ -527,7 +529,7 @@ def generate_LAEs(UV_lum, halo_mass, halo_ids, redshift, rew_min, lya_min):
 
 class LAEModel:
     """The object that generates an LAE population.
-    
+
     Attributes:
     -----------
         halo_ids (array_like): halo IDs of the LAE population.
@@ -535,18 +537,18 @@ class LAEModel:
         uv_lum (array_like): UV luminosities in erg/s.
         lya_rew (array_like): Lya REWs in Angstroms.
         lya_lum (array_like): Lya luminosities in erg/s.
-    
+
     """
 
     def __init__(self, redshift, delta_t, mass_h, rew_min=0.0, lya_min=1.0e42):
         """Initialise the LAE model.
-        
+
         Args:
         -----
             redshift (float): mean redshift of the LAE population.
             delta_t (float): duty cycle parameter in Myr.
             mass_h (array_like): array of halo masses in Msun.
-            rew_min (float): minimum observationally detectable REW in 
+            rew_min (float): minimum observationally detectable REW in
                 Angstroms.
             lya_min (float): minimum observationally detectable luminosity
                 in erg/s.
@@ -556,7 +558,7 @@ class LAEModel:
             print("Note: UV abundance matching for haloes",
                   "above M = {:.3e} Msun/h".format(10**Mmin))
             warnings.warn("Input halo mass below abundance matching regime!")
-        
+
         uv_func = abundance_match(delta_t)
         print("Abundance matching at z=6 completed!")
 

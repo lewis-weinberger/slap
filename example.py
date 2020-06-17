@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Example use of slap.py to generate a mock LAE 
+"""Example use of slap.py to generate a mock LAE
 population and find the luminosity function.
 
     Example:
@@ -10,10 +10,10 @@ population and find the luminosity function.
 """
 
 import numpy as np
-from slap import LAEModel
+import matplotlib.pyplot as plt
 from hmf import MassFunction
 from hmf.sample import sample_mf
-import matplotlib.pyplot as plt
+from slap import LAEModel
 
 # Parameters
 z = 7.3           # redshift
@@ -31,7 +31,7 @@ print("\nGenerating", n_halo, "halos in parent population")
 halo_mass, _ = sample_mf(n_halo, 10, z=z, hmf_model="SMT")
 print("Halo mass: min = {:.1e}, max = {:.1e} Msun/h".format(
     halo_mass.min(), halo_mass.max()))
-halo_mass /= smallh # Msun
+halo_mass /= smallh  # Msun
 
 # Generate LAE population from halo population
 lae_pop = LAEModel(z, delta_t, halo_mass, rew_min, lya_min)
@@ -72,7 +72,7 @@ k14_yerr_up = k14_yerr_up*k14_y
 k14_yerr_down = k14_yerr_down*k14_y
 
 # Plot comparison
-fig, ax = plt.subplots(1, 1, figsize=(5,5))
+fig, ax = plt.subplots(1, 1, figsize=(5, 5))
 
 ax.plot(lbins, lf, ls="--", c="grey", label="Model, intrinsic")
 ax.plot(lbins, lf_obs, ls="-", c="r", label="Model, T={:.2f}".format(t_igm))

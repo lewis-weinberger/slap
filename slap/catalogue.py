@@ -6,7 +6,7 @@ Examples:
 --------
     Import the module:
         >>> import catalogue as cat
-    
+
     Create a catalogue from scratch:
         >>> mock = cat.Catalogue(False, z, n, coords, mass_h, mag_uv,
         ...                      lum_lya, rew_lya, t_igm)
@@ -14,7 +14,7 @@ Examples:
     Save a catalogue to HDF5:
         >>> mock.write_to_HDF5(filename)
 
-    Load a catalogue from an HDF5 file: 
+    Load a catalogue from an HDF5 file:
         >>> mock = cat.Catalogue(True, filename)
 
     Find coordinates of LAEs within spatial slice:
@@ -24,6 +24,7 @@ Examples:
 
 import h5py as h5
 import numpy as np
+
 
 class Catalogue:
     """The catalogue object describing the LAE population.
@@ -42,7 +43,7 @@ class Catalogue:
     """
 
     def __init__(self, read_from_file, *args):
-        """Initialise catalogue object. 
+        """Initialise catalogue object.
 
         Args:
         -----
@@ -58,7 +59,6 @@ class Catalogue:
         else:
             self.read_from_args(args)
 
-            
     def read_from_hdf5(self, fname):
         """Initialise catalogue from HDF5 file.
 
@@ -67,7 +67,7 @@ class Catalogue:
             fname (str): path to HDF5 file
 
         """
-        
+
         with h5.File(fname, 'r') as f:
             self.z = f['/Catalogue'].attrs['redshift']
             self.n = f['/Catalogue'].attrs['n']
@@ -78,7 +78,6 @@ class Catalogue:
             self.rew_lya = f['/Catalogue/rew_lya'][()]
             self.t_igm = f['/Catalogue/t_igm'][()]
 
-            
     def read_from_args(self, *args):
         """Initialise catalogue from provided arguments.
 
@@ -92,20 +91,19 @@ class Catalogue:
             lum_lya (array_like, shape (n)): intrinsic Lya luminosity in erg/s
             rew_lya (array_like, shape (n)): intrinsic Lya REW in Angstroms
             t_igm (array_like, shape (n)): IGM transmission fraction
-            
+
         """
-        
-        assert(len(args) == 8)
-        
+        assert len(args) == 8
+
         self.z = args[0]
         self.n = args[1]
 
-        assert(args[2].shape == (3,self.n))
-        assert(args[3].size == self.n)
-        assert(args[4].size == self.n)
-        assert(args[5].size == self.n)
-        assert(args[6].size == self.n)
-        assert(args[7].size == self.n)
+        assert args[2].shape == (3, self.n)
+        assert args[3].size == self.n
+        assert args[4].size == self.n
+        assert args[5].size == self.n
+        assert args[6].size == self.n
+        assert args[7].size == self.n
 
         self.coords = args[2]
         self.mass_h = args[3]
@@ -113,11 +111,10 @@ class Catalogue:
         self.lum_lya = args[5]
         self.rew_lya = args[6]
         self.t_igm = args[7]
-   
-    
+
     def print_info(self):
         """Print useful info.
-        
+
         """
         print("\nCatalogue info:")
         print("z = {:.3f}".format(self.z))
@@ -133,10 +130,9 @@ class Catalogue:
         print("IGM transmission: min = {:.3f}, max = {:.3f}".format(
             self.t_igm.min(), self.t_igm.max()))
 
-
     def write_to_HDF5(self, fname, overwrite=False):
         """Write catalogue to HDF5 file.
-        
+
         Args:
         -----
             fname (str): path to output file.
@@ -152,7 +148,7 @@ class Catalogue:
 
         with h5.File(fname, wcode) as f:
             h5catalogue = f.create_group("Catalogue")
-           
+
             h5catalogue.attrs['z'] = self.z
             h5catalogue.attrs['n'] = self.n
             h5catalogue.create_dataset("coords", data=self.coords)
@@ -162,17 +158,16 @@ class Catalogue:
             h5catalogue.create_dataset("rew_lya", data=self.rew_lya)
             h5catalogue.create_dataset("t_igm", data=self.t_igm)
 
-            
     def write_to_binary(self, fname, overwrite=False):
         """Write catalogue to custom format binary file.
-        
+
         Args:
         -----
             fname (str): path to output file.
             overwrite (bool): if True, overwrite existing files.
 
         """
-        
+
         print("Writing to:", fname)
         if overwrite:
             wcode = 'w'
@@ -181,9 +176,9 @@ class Catalogue:
 
         z = np.array(self.z).astype(np.float64)
         n = np.array(self.n).astype(np.int32)
-        xcoords = self.coords[0,:].astype(np.float64)
-        ycoords = self.coords[1,:].astype(np.float64)
-        zcoords = self.coords[2,:].astype(np.float64)
+        xcoords = self.coords[0, :].astype(np.float64)
+        ycoords = self.coords[1, :].astype(np.float64)
+        zcoords = self.coords[2, :].astype(np.float64)
         mass_h = self.mass_h.astype(np.float64)
         mag_uv = self.mag_uv.astype(np.float64)
         lum_lya = self.lum_lya.astype(np.float64)
@@ -202,7 +197,6 @@ class Catalogue:
             rew_lya.tofile(f)
             t_igm.tofile(f)
 
-            
     def spatial_slice(self, zdepth, depth, axis='z'):
         """Create a configuration-space slice of the catalogue volume.
 
@@ -216,24 +210,24 @@ class Catalogue:
         --------
             x, y (array_like): coordinates of LAEs in the slice.
         """
-        
-        if axis=='z':
-            x = self.coords[0,:]
-            y = self.coords[1,:]
-            z = self.coords[2,:]
-        elif axis=='y':
-            x = self.coords[2,:]
-            y = self.coords[0,:]
-            z = self.coords[1,:]
-        elif axis=='x':
-            x = self.coords[1,:]
-            y = self.coords[2,:]
-            z = self.coords[0,:]
+
+        if axis == 'z':
+            x = self.coords[0, :]
+            y = self.coords[1, :]
+            z = self.coords[2, :]
+        elif axis == 'y':
+            x = self.coords[2, :]
+            y = self.coords[0, :]
+            z = self.coords[1, :]
+        elif axis == 'x':
+            x = self.coords[1, :]
+            y = self.coords[2, :]
+            z = self.coords[0, :]
         else:
             raise ValueError("Must slice along one of the coordinate axes!")
 
         zdiff = np.absolute(z - zdepth)
-        mask = np.logical_and(zdiff >= 0.0, zdiff < depth) 
+        mask = np.logical_and(zdiff >= 0.0, zdiff < depth)
         slice_x = x[mask]
         slice_y = y[mask]
         print("Number of LAEs in slice:", slice_x.size)
